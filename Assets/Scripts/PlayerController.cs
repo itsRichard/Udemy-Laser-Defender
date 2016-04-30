@@ -5,9 +5,13 @@ public class PlayerController : MonoBehaviour {
 
 	public float speed = 15.0f;
 	public float padding = 1.0f;
-	float xmin;
-	float xmax;
+	public float xmin;
+	public float xmax;
+    public float playerProjectileSpeed;
+    public float playerFireRate = 0.2f;
+    public float health = 250f;
 
+    public GameObject projectile;
 	
 	// Use this for initialization
 	void Start () {
@@ -18,7 +22,6 @@ public class PlayerController : MonoBehaviour {
 		xmin = leftMost.x + padding;
 		xmax = rightMost.x - padding;
 	}
-	
 	// Update is called once per frame
 	void Update () {
 		if(Input.GetKey(KeyCode.LeftArrow)){
@@ -34,6 +37,44 @@ public class PlayerController : MonoBehaviour {
 		float newX = Mathf.Clamp (transform.position.x, xmin, xmax);
 		// move to a new x position that is now clamped between xmin and xmax.  
 		transform.position = new Vector3 (newX,transform.position.y, transform.position.z);
-	
-	}
+
+        // fire rate control
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            InvokeRepeating("Fire", 0.000001f, playerFireRate);
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            CancelInvoke("Fire");
+        }
+	} 
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        // Get the projectile that hit the enemy
+
+        Projectile missile = collider.gameObject.GetComponent<Projectile>();
+        if (missile)
+        {
+            Debug.Log("Player Hit");
+            health -= missile.GetDamage();
+            missile.hit();
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
+ 
+        }
+
+
+    }
+
+    void Fire()
+    {
+        Vector3 offset = new Vector3(0, 1, 0);
+        // Create Projectile based on the project prefab attached to this game object script
+        GameObject playerProjectile = Instantiate(projectile, transform.position+offset, Quaternion.identity) as GameObject;
+        // Shoot it 
+        playerProjectile.GetComponent<Rigidbody2D>().velocity = new Vector3(0, playerProjectileSpeed, 0);
+    }
 }
