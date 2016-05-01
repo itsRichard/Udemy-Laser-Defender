@@ -10,22 +10,48 @@ public class EnemySpawner : MonoBehaviour {
     public float speed = 5f;
     private float xMax;
     private float xMin;
+    public float spawnDelay = 0.5f;
 
     // Use this for initialization
     void Start () {
+        SetPlayspaceBoundaries();
+        SpawnEnemiesUntilFull();
+	}
 
+    public void SetPlayspaceBoundaries()
+    {
         float distanceToCamera = transform.position.z - Camera.main.transform.position.z;
         Vector3 leftBoundary = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, distanceToCamera));
         Vector3 rightBoundary = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, distanceToCamera));
         xMax = rightBoundary.x;
         xMin = leftBoundary.x;
+    }
 
-        // what comes out is an object, not a game object, hense "as GameObject"
-        foreach (Transform child in transform){
-            GameObject enemy = Instantiate(enemyPrefab, child.transform.position,Quaternion.identity) as GameObject;
-			enemy.transform.parent = child;
-			}
-	}
+    void SpawnEnemiesUntilFull()
+    {
+        Transform freePosition = NextFreePosition();
+        if (freePosition)
+        {
+            GameObject enemy = Instantiate(enemyPrefab, freePosition.position, Quaternion.identity) as GameObject;
+            enemy.transform.parent = freePosition;  // set the enemy's parent as the free position that was just filled
+        }
+
+        if (NextFreePosition()) // only spawn if there is a free position REVIEW THIS AGAIN  WITH AND WITHOUT THIS  
+        {
+            Invoke("SpawnEnemiesUntilFull", spawnDelay); // add a time delay
+        }
+
+       
+    }
+
+    public void SpawnEnemies()
+    {
+        foreach(Transform child in transform)
+        {
+            GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity) as GameObject;
+            enemy.transform.parent = child;
+        }
+    }
 
     public void OnDrawGizmos()
     {
@@ -36,7 +62,6 @@ public class EnemySpawner : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
         if (movingRight)
         {
             transform.position += new Vector3(speed * Time.deltaTime, 0, 0);
@@ -57,5 +82,39 @@ public class EnemySpawner : MonoBehaviour {
         {
             movingRight = false;
         }
+
+        if (AllMembersDead())
+        {
+            Debug.Log("Empty Formation.  All members are dead.");
+            SpawnEnemiesUntilFull();
+        }
     }
+
+    bool AllMembersDead()
+    {
+        // should be six
+        Debug.Log("Transform.childcount is " + transform.childCount);
+        // checking the transform in the transform (positions in the enemy formation)
+        foreach (Transform childPositionGameObject in transform)  
+        {
+            if (childPositionGameObject.childCount > 0)
+            {
+                return false; // if any position has more than one, all members are not dead.  
+            }
+        }
+        return true;
+    }
+
+    Transform NextFreePosition()
+    {
+        foreach(Transform childPositionGameObject in transform)
+        {
+            if (childPositionGameObject.childCount < 1)
+            {
+                return childPositionGameObject; 
+            }
+        }
+        return null;
+    }
+    
 }
