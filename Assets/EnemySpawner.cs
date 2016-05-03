@@ -30,14 +30,12 @@ public class EnemySpawner : MonoBehaviour {
     void SpawnEnemiesUntilFull()
     {
         Transform freePosition = NextFreePosition();
-        if (freePosition)	// if there is a free position, put something in it 
+        if (freePosition)
         {
             GameObject enemy = Instantiate(enemyPrefab, freePosition.position, Quaternion.identity) as GameObject;
             enemy.transform.parent = freePosition;  // set the enemy's parent as the free position that was just filled
-			Debug.Log (freePosition);
         }
 
-		// if there is a free position, execute this script  
         if (NextFreePosition()) // only spawn if there is a free position REVIEW THIS AGAIN  WITH AND WITHOUT THIS  
         {
             Invoke("SpawnEnemiesUntilFull", spawnDelay); // add a time delay
@@ -109,7 +107,6 @@ public class EnemySpawner : MonoBehaviour {
 
     Transform NextFreePosition()
     {
-		/// If there is a blank position, reutrn it, else, null
         foreach(Transform childPositionGameObject in transform)
         {
             if (childPositionGameObject.childCount < 1)

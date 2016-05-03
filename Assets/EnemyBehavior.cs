@@ -7,6 +7,15 @@ public class EnemyBehavior : MonoBehaviour {
     public GameObject projectile;
     public float enemyProjectileSpeed = 5f;
     public float shotsPerSecond = 0.5f;
+    public int scoreValue = 150;
+    private Score scoreKeeper;
+    public AudioClip fireSound;
+    public AudioClip deadSound;
+
+    void Start()
+    {
+        scoreKeeper = GameObject.Find("Score").GetComponent<Score>();
+    }
 
     void OnTriggerEnter2D(Collider2D collider)
         {
@@ -19,6 +28,8 @@ public class EnemyBehavior : MonoBehaviour {
             if (health <= 0)
             {
                 Destroy(gameObject);
+                scoreKeeper.ScorePoints(scoreValue);
+                AudioSource.PlayClipAtPoint(deadSound, transform.position);
             }
             Debug.Log("Hit by a projectile");
             }
@@ -36,8 +47,9 @@ public class EnemyBehavior : MonoBehaviour {
     
     void Fire()
     {
-        Vector3 startPosition = transform.position + new Vector3(0, -1F, 0);
+        Vector3 startPosition = transform.position + new Vector3(0, 0F, 0);
         GameObject enemyProjectile = Instantiate(projectile, startPosition, Quaternion.identity) as GameObject;
         enemyProjectile.GetComponent<Rigidbody2D>().velocity = new Vector3(0, -enemyProjectileSpeed, 0);
+        AudioSource.PlayClipAtPoint(fireSound, transform.position);
     }
 }
