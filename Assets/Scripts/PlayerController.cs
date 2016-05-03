@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
     public float playerFireRate = 0.2f;
     public float health = 250f;
 
+    public AudioClip fireSound;
+
     public GameObject projectile;
 	
 	// Use this for initialization
@@ -76,5 +78,6 @@ public class PlayerController : MonoBehaviour {
         GameObject playerProjectile = Instantiate(projectile, transform.position+offset, Quaternion.identity) as GameObject;
         // Shoot it 
         playerProjectile.GetComponent<Rigidbody2D>().velocity = new Vector3(0, playerProjectileSpeed, 0);
+        AudioSource.PlayClipAtPoint(fireSound,transform.position);
     }
 }
