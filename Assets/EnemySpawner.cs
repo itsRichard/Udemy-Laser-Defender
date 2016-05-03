@@ -12,7 +12,7 @@ public class EnemySpawner : MonoBehaviour {
     private float xMin;
     public float spawnDelay = 0.5f;
 
-    // Use this for initialization
+    // Use this for initialization derp derp derp
     void Start () {
         SetPlayspaceBoundaries();
         SpawnEnemiesUntilFull();
