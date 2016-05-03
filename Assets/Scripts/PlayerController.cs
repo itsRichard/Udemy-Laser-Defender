@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
@@ -64,6 +65,8 @@ public class PlayerController : MonoBehaviour {
             if (health <= 0)
             {
                 Destroy(gameObject);
+                LevelManager man = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+                man.LoadLevel("Win Screen");
             }
  
         }

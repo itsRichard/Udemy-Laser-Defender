@@ -3,9 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class Score : MonoBehaviour {
-    public int playerScore = 0;
+    public static int playerScore = 0;  //static stores value against the class, not the instance  
     private Text myText;  
-
   
     void Start()
     {
@@ -19,10 +18,9 @@ public class Score : MonoBehaviour {
         myText.text = playerScore.ToString();
     }
 
-    public void Reset()
+    public static void Reset()
     {
         playerScore = 0;
-        myText.text = playerScore.ToString();
     }
 
 }

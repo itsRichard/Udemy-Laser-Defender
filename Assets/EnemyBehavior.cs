@@ -30,6 +30,8 @@ public class EnemyBehavior : MonoBehaviour {
                 Destroy(gameObject);
                 scoreKeeper.ScorePoints(scoreValue);
                 AudioSource.PlayClipAtPoint(deadSound, transform.position);
+
+
             }
             Debug.Log("Hit by a projectile");
             }
